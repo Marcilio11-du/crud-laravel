@@ -118,6 +118,8 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel-crud-with-relationship/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/laravel-crud-with-relationship/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/laravel-crud-with-relationship/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel-crud-with-relationship/storage/app" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel-crud-with-relationship/storage/framework" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
