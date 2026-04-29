@@ -20,6 +20,21 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::create('article_user', function (Blueprint $table) {
+            $table->foreignId('article_id')
+                ->constrained('articles')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->softDeletes();
+            $table->timestamps();
+            $table->primary(['article_id', 'user_id']);
+        });
+
     }
 
     /**
@@ -28,5 +43,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('articles');
+        Schema::dropIfExists('article_user');
     }
 };
