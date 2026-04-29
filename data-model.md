@@ -27,5 +27,18 @@ Para um sistema de gerenciamento de artigos na internet
 ### Entidades:
 
 - **Categorias**(id, nome, descricao)
-- **Artigos**(id, conteudo, data_publicacao)
+- **Artigos**(id, title, conteudo, data_publicacao)
 - **Utilizador**(id, p_nome, sb_nome, data_nascimento)
+
+### Relacionamentos
+
+Utilizador N:N Artigos
+Categorias 1:N Artigos
+
+## Modelo Relacional com auditoria e softdelete
+
+
+ - **Categorias**(id, nome, descricao, createdAt, updatedAt, deleteAt)
+ - **Utilizador**(id, p_nome, sb_nome, data_nascimento, createdAt, updatedAt, deleteAt)
+ - **Artigos**(id, title, conteudo, data_publicacao, id_categoria, createdAt, updatedAt, deleteAt)
+ - **Artigo_Utilizador**(id, id_artigo_id_utilizador, createdAt, updatedAt, deleteAt)
