@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('article_user', function (Blueprint $table) {
             $table->id();
-            $table->string('fst_name');
-            $table->string('sur_name');
-            $table->date('birth_date');
 
-            // Auditoria e SoftDelete
+            // Chaves estrangeiras que formam o relacionamento N:N
+            $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+
+            // Auditoria e SoftDelete na relação
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,8 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('articles_users');
     }
 };

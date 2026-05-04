@@ -13,28 +13,18 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained('categories');
             $table->string('title');
-            $table->longText('content');
-            $table->date('published_at');
-            $table->softDeletes();
-            $table->timestamps();
-        });
+            $table->text('content');
+            $table->dateTime('publishing_date');
+            $table->string('cover_path')->nullable(); // Armazena o caminho da imagem
 
-        Schema::create('article_user', function (Blueprint $table) {
-            $table->foreignId('article_id')
-                ->constrained('articles')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->softDeletes();
-            $table->timestamps();
-            $table->primary(['article_id', 'user_id']);
-        });
+            // Relacionamento 1:N (Categorias)
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
 
+            // Auditoria e SoftDelete
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
