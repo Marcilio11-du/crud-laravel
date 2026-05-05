@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArticleRequest;
-use App\Models\Categoria;
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
-use App\Models\Utilizador;
 use App\Services\ArticleService;
-use App\Services\ArtigoService;
-use App\Http\Requests\StoreArtigoRequest;
-use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
@@ -38,7 +34,7 @@ class ArticleController extends Controller
     public function destroy($id)
     {
         $this->service->softDelete($id);
-        return redirect()->route('articles.index')->with('success', 'Artigo movido para a lixeira.');
+        return redirect()->route('article.index')->with('success', 'Artigo movido para a lixeira.');
     }
 
     public function trash()
@@ -51,5 +47,21 @@ class ArticleController extends Controller
     {
         $this->service->restore($id);
         return redirect()->route('articles.trash')->with('success', 'Artigo restaurado!');
+    }
+
+    public function edit($id)
+    {
+        $article = Article::with('users')->findOrFail($id);
+        $categories = Category::all();
+        $users = User::all();
+
+        return view('articles.edit', compact('article', 'categories', 'users'));
+    }
+
+    public function update(StoreArticleRequest $request, $id)
+    {
+        $this->service->update($id, $request->validated());
+
+        return redirect()->route('article.index')->with('success', 'Artigo atualizado com sucesso!');
     }
 }
