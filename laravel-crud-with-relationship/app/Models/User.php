@@ -12,7 +12,7 @@ class User extends Model
 
     protected $table = 'users';
 
-    protected $fillable = ['fst_nome', 'sur_nome', 'birth_date'];
+    protected $fillable = ['fst_name', 'sur_name', 'birth_date'];
 
     protected $casts = [
         'birth_date' => 'date',
@@ -23,7 +23,7 @@ class User extends Model
      */
     public function articles(): BelongsToMany
     {
-        return $this->belongsToMany(Artigo::class, 'article_user', 'user_id', 'article_id')
+        return $this->belongsToMany(Article::class, 'article_user', 'user_id', 'article_id')
             ->withTimestamps()
             ->withPivot('deleted_at');
     }

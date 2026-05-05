@@ -10,36 +10,32 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Article extends Model
 {
     use SoftDeletes;
-
-    protected $table = 'articles';
-
-    protected $fillable = [
-        'title',
-        'content',
-        'publishing_date',
-        'cover_path',
-        'category_id',
-    ];
+    protected $fillable = ['title', 'content', 'publishing_date', 'cover_path', 'category_id'];
 
     protected $casts = [
         'publishing_date' => 'datetime',
     ];
 
     /**
-     * Relacionamento N:1
+     * Se publishing_date for nulo ao criar, assume o timestamp actual.
      */
-    public function category(): BelongsTo
+    protected static function boot()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->publishing_date)) {
+                $model->publishing_date = now();
+            }
+        });
     }
 
-    /**
-     * Relacionamento N:N
-     */
-    public function authors(): BelongsToMany
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'article_user', 'article_id', 'user_id')
-            ->withTimestamps()
-            ->withPivot('deleted_at');
+        return $this->belongsTo(Category::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'article_user');
     }
 }
