@@ -10,8 +10,7 @@ class ArticleService
 {
     public function listActive()
     {
-        // Eager Loading (with) evita o problema N+1 de performance
-        return Article::with(['category', 'authors'])->latest()->get();
+        return Article::with(['category', 'users'])->latest()->get();
     }
 
     public function listTrashed()
@@ -19,33 +18,69 @@ class ArticleService
         return Article::onlyTrashed()->with('category')->get();
     }
 
+    public function findById(int $id, bool $withTrashed = false)
+    {
+        $query = Article::query();
+        if ($withTrashed) $query->withTrashed();
+        return $query->findOrFail($id);
+    }
+
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Tratamento da Imagem (Upload)
+            // Corrigido: campo do form é 'cover', coluna na BD é 'cover_path'
             if (isset($data['cover'])) {
-
-                $path = $data['cover']->store('articles', 'public');
-                $data['cover_path'] = $path;
+                $data['cover_path'] = $data['cover']->store('articles', 'public');
             }
 
-            // Criar o Artigo
-            $artigo = Artigo::create($data);
+            // Corrigido: remover campos que não existem na tabela articles antes do create()
+            $users = $data['users'] ?? [];
+            unset($data['cover'], $data['users']);
 
-            // Relacionamento N:N (Tabela Pivot)
-            $artigo->autores()->sync($data['autores']);
+            $article = Article::create($data);
 
-            return $artigo;
+            if (!empty($users)) {
+                $article->users()->sync($users);
+            }
+
+            return $article;
+        });
+    }
+
+    public function update(int $id, array $data)
+    {
+        return DB::transaction(function () use ($id, $data) {
+            $article = $this->findById($id);
+
+            // Corrigido: cover → cover_path
+            if (isset($data['cover'])) {
+                if ($article->cover_path) {
+                    Storage::disk('public')->delete($article->cover_path);
+                }
+                $data['cover_path'] = $data['cover']->store('articles', 'public');
+            }
+
+            // Corrigido: remover campos que não existem na tabela articles antes do update()
+            $users = $data['users'] ?? [];
+            unset($data['cover'], $data['users']);
+
+            $article->update($data);
+
+            if (!empty($users)) {
+                $article->users()->sync($users);
+            }
+
+            return $article;
         });
     }
 
     public function softDelete(int $id)
     {
-        return Article::findOrFail($id)->delete();
+        return $this->findById($id)->delete();
     }
 
     public function restore(int $id)
     {
-        return Article::onlyTrashed()->findOrFail($id)->restore();
+        return $this->findById($id, true)->restore();
     }
 }
