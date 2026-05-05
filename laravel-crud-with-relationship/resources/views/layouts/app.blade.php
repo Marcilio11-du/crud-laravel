@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article Master - Expert System</title>
     <style>
+
         :root {
             --bg: #020617; --card: #0f172a; --border: #1e293b;
             --purple: #7c3aed; --purple-hover: #6d28d9;
@@ -47,7 +48,7 @@
         .form-group { margin-bottom: 1.2rem; }
         label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: var(--purple); font-weight: bold; }
         input, select, textarea { width: 100%; padding: 0.8rem; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: white; box-sizing: border-box; }
-        /* Corrigido: opções do select ficavam pretas */
+
         option { background: #0f172a; color: white; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -98,7 +99,7 @@
                 </div>
             </div>
 
-            {{-- Corrigido: name="users" → name="users[]", p_nome → fst_name + sur_name, opções visíveis --}}
+
             <div class="form-group">
                 <label>Autores (Ctrl para múltiplos)</label>
                 <select name="users[]" multiple style="height: 90px;">
@@ -108,13 +109,13 @@
                 </select>
             </div>
 
-            {{-- Corrigido: campo conteúdo estava em falta --}}
+
             <div class="form-group">
                 <label>Conteúdo</label>
                 <textarea name="content" rows="4"></textarea>
             </div>
 
-            {{-- Corrigido: name="image" → name="cover" --}}
+
             <div class="form-group">
                 <label>Imagem de Capa</label>
                 <input type="file" name="cover">

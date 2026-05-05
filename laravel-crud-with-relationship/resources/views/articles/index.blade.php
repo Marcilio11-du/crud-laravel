@@ -60,7 +60,7 @@
                     </span>
                 </td>
 
-                {{-- Autores --}}
+
                 <td style="font-size:0.75rem; color:var(--muted);">
                     @forelse($article->users as $author)
                         <span style="display:inline-block; background:var(--azul-escuro); border:1px solid var(--borda); border-radius:4px; padding:2px 7px; margin:2px; font-size:0.65rem; color:white;">

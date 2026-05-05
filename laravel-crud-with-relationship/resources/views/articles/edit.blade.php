@@ -10,7 +10,7 @@
 
             <div class="form-group">
                 <label>Título do Artigo</label>
-                {{-- Corrigido: titulo → title --}}
+
                 <input type="text" name="title" value="{{ old('title', $article->title) }}" required>
             </div>
 
@@ -27,7 +27,7 @@
                 </div>
                 <div class="form-group">
                     <label>Data de Publicação</label>
-                    {{-- Corrigido: publishing_date é o nome real da coluna --}}
+
                     <input type="datetime-local" name="publishing_date" value="{{ $article->publishing_date->format('Y-m-d\TH:i') }}" required>
                 </div>
             </div>
@@ -44,7 +44,7 @@
 
             <div class="form-group">
                 <label>Autores (Selecione múltiplos)</label>
-                {{-- Corrigido: name="autores" → name="authors[]", $article->authors → $article->users, fst_name/sur_name → fst_nome/sur_nome --}}
+
                 <select name="authors[]" multiple style="width:100%; height: 120px; background: var(--azul-escuro); color:white; border: 1px solid var(--borda); border-radius:5px; padding: 10px;">
                     @foreach($users as $user)
                         <option value="{{ $user->id }}" {{ in_array($user->id, $article->users->pluck('id')->toArray()) ? 'selected' : '' }}>
