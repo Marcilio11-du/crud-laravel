@@ -28,7 +28,8 @@
                 <div class="form-group">
                     <label>Data de Publicação</label>
 
-                    <input type="datetime-local" name="published_at" value="{{ old('published_at') }}" required>
+                    <input type="datetime-local" name="published_at" value="{{ old('published_at') }}" min="{{ now()->format('Y-m-d\TH:i') }}"
+                           max="{{ now()->format('Y-m-d\TH:i') }}"  required>
                 </div>
             </div>
 

@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3rem;">
         <div>
-            <h1 style="margin:0; font-size: 2.5rem; letter-spacing: -2px">News <span style="color:var(--purple)">Feed</span></h1>
-            <p style="color:var(--muted)">Gerenciamento de publicações</p>
+            <h1 style="margin:0; font-size:2.5rem; letter-spacing:-2px;">News <span style="color:var(--purple)">Feed</span></h1>
+            <p style="color:var(--muted); margin:0.3rem 0 0;">Gerenciamento de publicações</p>
         </div>
-        <label for="modal-toggle" class="btn btn-primary">+ NOVO ARTIGO</label>
+        <button onclick="openModal('modal-create')" class="btn btn-primary">+ NOVO ARTIGO</button>
     </div>
 
     @if($errors->any())
-        <div style="background: rgba(248, 113, 113, 0.1); border: 1px solid #f87171; padding: 1rem; border-radius: 12px; margin-bottom: 2rem;">
-            <ul style="margin:0; color:#f87171; font-size: 0.8rem">
+        <div style="background:rgba(248,113,113,0.1); border:1px solid #f87171; padding:1rem; border-radius:12px; margin-bottom:2rem;">
+            <ul style="margin:0; color:#f87171; font-size:0.8rem;">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -27,61 +27,51 @@
             <th>Categoria</th>
             <th>Autores</th>
             <th>Publicado em</th>
-            <th style="text-align:right">Ações</th>
+            <th style="text-align:right;">Ações</th>
         </tr>
         </thead>
         <tbody>
         @forelse($articles as $article)
             <tr>
-                {{-- Imagem de capa --}}
                 <td>
                     @if($article->cover_path)
-                        <img src="{{ asset('storage/' . $article->cover_path) }}" width="60" height="45"
-                             style="border-radius:6px; object-fit:cover; border: 1px solid var(--borda);">
+                        <img src="{{ asset('storage/'.$article->cover_path) }}" width="60" height="45"
+                             style="border-radius:6px; object-fit:cover; border:1px solid var(--border);">
                     @else
-                        <div style="width:60px; height:45px; background:var(--azul-escuro); border-radius:6px; border:1px solid var(--borda); display:flex; align-items:center; justify-content:center;">
-                            <span style="color:var(--muted); font-size:0.6rem;">SEM CAPA</span>
+                        <div style="width:60px; height:45px; background:var(--bg); border-radius:6px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
+                            <span style="color:var(--muted); font-size:0.55rem;">SEM CAPA</span>
                         </div>
                     @endif
                 </td>
-
-                {{-- Título + preview do conteúdo --}}
                 <td>
                     <div style="font-weight:bold; color:white;">{{ $article->title }}</div>
-                    <div style="font-size:0.7rem; color:var(--muted); margin-top:3px;">
-                        {{ Str::limit($article->content, 60) }}
-                    </div>
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:3px;">{{ Str::limit($article->content, 60) }}</div>
                 </td>
-
-                {{-- Categoria --}}
                 <td>
-                    <span style="background:var(--bg); padding: 4px 10px; border-radius: 5px; font-size:0.7rem;">
-                        {{ $article->category->name }}
-                    </span>
+                <span style="background:var(--bg); padding:4px 10px; border-radius:5px; font-size:0.7rem;">
+                    {{ $article->category->name }}
+                </span>
                 </td>
-
-
-                <td style="font-size:0.75rem; color:var(--muted);">
+                <td style="font-size:0.75rem;">
                     @forelse($article->users as $author)
-                        <span style="display:inline-block; background:var(--azul-escuro); border:1px solid var(--borda); border-radius:4px; padding:2px 7px; margin:2px; font-size:0.65rem; color:white;">
-                            {{ $author->fst_name }} {{ $author->sur_name }}
-                        </span>
+                        <span style="display:inline-block; background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:2px 7px; margin:2px; font-size:0.65rem; color:white;">
+                        {{ $author->fst_name }} {{ $author->sur_name }}
+                    </span>
                     @empty
-                        <span style="color:var(--muted)">—</span>
+                        <span style="color:var(--muted);">—</span>
                     @endforelse
                 </td>
-
-                {{-- Data --}}
                 <td style="font-size:0.75rem; color:var(--muted); white-space:nowrap;">
-                    {{ $article->publishing_date->format('d/m/Y H:i') }}
+                    {{ $article->publishing_date->format('d/m/Y H:i')  }}
                 </td>
-
-                {{-- Ações --}}
                 <td style="text-align:right; white-space:nowrap;">
-                    <a href="{{ route('article.edit', $article->id) }}"
-                       style="color:var(--blue); text-decoration:none; font-size:0.8rem; margin-right:1rem;">EDITAR</a>
+
+                    <button onclick="editArticle({{ $article->id }})"
+                            style="background:none; border:none; color:var(--blue); cursor:pointer; font-weight:bold; font-size:0.8rem; margin-right:1rem;">
+                        EDITAR
+                    </button>
                     <form action="{{ route('article.destroy', $article->id) }}" method="POST"
-                          style="display:inline" onsubmit="return confirm('Mover para lixeira?')">
+                          style="display:inline;" onsubmit="return confirm('Mover para lixeira?')">
                         @csrf @method('DELETE')
                         <button type="submit"
                                 style="background:none; border:none; color:#f87171; cursor:pointer; font-weight:bold; font-size:0.8rem;">
@@ -92,11 +82,10 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" style="text-align:center; color:var(--muted); padding: 3rem;">Feed vazio.</td>
+                <td colspan="6" style="text-align:center; color:var(--muted); padding:3rem;">Feed vazio.</td>
             </tr>
         @endforelse
         </tbody>
     </table>
-
 
 @endsection
