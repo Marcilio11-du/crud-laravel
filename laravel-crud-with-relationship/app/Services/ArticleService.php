@@ -28,12 +28,12 @@ class ArticleService
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Corrigido: campo do form é 'cover', coluna na BD é 'cover_path'
+
             if (isset($data['cover'])) {
                 $data['cover_path'] = $data['cover']->store('articles', 'public');
             }
 
-            // Corrigido: remover campos que não existem na tabela articles antes do create()
+
             $users = $data['users'] ?? [];
             unset($data['cover'], $data['users']);
 
@@ -52,7 +52,7 @@ class ArticleService
         return DB::transaction(function () use ($id, $data) {
             $article = $this->findById($id);
 
-            // Corrigido: cover → cover_path
+
             if (isset($data['cover'])) {
                 if ($article->cover_path) {
                     Storage::disk('public')->delete($article->cover_path);
@@ -60,7 +60,7 @@ class ArticleService
                 $data['cover_path'] = $data['cover']->store('articles', 'public');
             }
 
-            // Corrigido: remover campos que não existem na tabela articles antes do update()
+
             $users = $data['users'] ?? [];
             unset($data['cover'], $data['users']);
 
