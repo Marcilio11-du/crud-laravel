@@ -18,13 +18,6 @@ class ArticleController extends Controller
         return view('articles.index', compact('articles'));
     }
 
-    public function create()
-    {
-        $categories = Category::all();
-        $users = User::all();
-        return view('articles.create', compact('categories', 'users'));
-    }
-
     public function store(StoreArticleRequest $request)
     {
         $this->service->store($request->validated());
@@ -40,6 +33,10 @@ class ArticleController extends Controller
     public function trash()
     {
         $articles = $this->service->listTrashed();
+        // Retorna JSON quando chamado via fetch (modal), view quando acesso directo
+        if (request()->wantsJson()) {
+            return response()->json($articles);
+        }
         return view('articles.trash', compact('articles'));
     }
 
@@ -49,19 +46,26 @@ class ArticleController extends Controller
         return redirect()->route('articles.trash')->with('success', 'Artigo restaurado!');
     }
 
+    // Retorna JSON com os dados do artigo para preencher o modal de edição
     public function edit($id)
     {
         $article = Article::with('users')->findOrFail($id);
-        $categories = Category::all();
-        $users = User::all();
-
-        return view('articles.edit', compact('article', 'categories', 'users'));
+        return response()->json([
+            'article'  => $article,
+            'user_ids' => $article->users->pluck('id'),
+        ]);
     }
 
     public function update(StoreArticleRequest $request, $id)
     {
         $this->service->update($id, $request->validated());
-
         return redirect()->route('article.index')->with('success', 'Artigo atualizado com sucesso!');
+    }
+
+    // Hard delete — apaga permanentemente da BD
+    public function forceDelete($id)
+    {
+        $this->service->forceDelete($id);
+        return redirect()->route('articles.trash')->with('success', 'Artigo eliminado permanentemente.');
     }
 }
