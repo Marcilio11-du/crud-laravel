@@ -28,21 +28,14 @@ class ArticleService
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-
             if (isset($data['cover'])) {
                 $data['cover_path'] = $data['cover']->store('articles', 'public');
             }
-
-
             $users = $data['users'] ?? [];
             unset($data['cover'], $data['users']);
 
             $article = Article::create($data);
-
-            if (!empty($users)) {
-                $article->users()->sync($users);
-            }
-
+            if (!empty($users)) $article->users()->sync($users);
             return $article;
         });
     }
@@ -51,25 +44,15 @@ class ArticleService
     {
         return DB::transaction(function () use ($id, $data) {
             $article = $this->findById($id);
-
-
             if (isset($data['cover'])) {
-                if ($article->cover_path) {
-                    Storage::disk('public')->delete($article->cover_path);
-                }
+                if ($article->cover_path) Storage::disk('public')->delete($article->cover_path);
                 $data['cover_path'] = $data['cover']->store('articles', 'public');
             }
-
-
             $users = $data['users'] ?? [];
             unset($data['cover'], $data['users']);
 
             $article->update($data);
-
-            if (!empty($users)) {
-                $article->users()->sync($users);
-            }
-
+            $article->users()->sync($users);
             return $article;
         });
     }
@@ -82,5 +65,14 @@ class ArticleService
     public function restore(int $id)
     {
         return $this->findById($id, true)->restore();
+    }
+
+    public function forceDelete(int $id)
+    {
+        $article = $this->findById($id, true);
+        if ($article->cover_path) {
+            Storage::disk('public')->delete($article->cover_path);
+        }
+        $article->forceDelete();
     }
 }

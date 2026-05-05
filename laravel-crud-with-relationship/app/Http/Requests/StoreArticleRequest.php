@@ -13,9 +13,9 @@ class StoreArticleRequest extends FormRequest
         return [
             'title'            => 'required|string|max:255',
             'content'          => 'required|string',
-            'publishing_date'  => 'nullable|date',
+            'publishing_date'  => 'nullable|date|before_or_equal:now',
             'category_id'      => 'required|exists:categories,id',
-            'users'            => 'nullable|array',        // required → nullable (artigo sem autores é válido)
+            'users'            => 'nullable|array',        // Corrigido: required → nullable (artigo sem autores é válido)
             'users.*'          => 'exists:users,id',       // Valida cada id individualmente
             'cover'            => 'nullable|image|max:2048',
         ];
